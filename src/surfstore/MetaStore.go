@@ -1,6 +1,7 @@
 package surfstore
 
 import (
+	"fmt"
 	"net/rpc"
 )
 
@@ -10,13 +11,35 @@ type MetaStore struct {
 }
 
 func (m *MetaStore) GetFileInfoMap(succ *bool, serverFileInfoMap *map[string]FileMetaData) error {
-	// copy your code implemented in project 3 here
-	panic("todo")
+	for k, v := range m.FileMetaMap {
+		(*serverFileInfoMap)[k] = v
+	}
+
+	return nil
 }
 
 func (m *MetaStore) UpdateFile(fileMetaData *FileMetaData, latestVersion *int) (err error) {
-	// copy your code implemented in project 3 here
-	panic("todo")
+	oldFileMeta, exist := m.FileMetaMap[fileMetaData.Filename]
+	if !exist {
+		// Create a dummy old file meta if the file does not exist yet
+		oldFileMeta = FileMetaData{
+			Filename:      "",
+			Version:       0,
+			BlockHashList: nil,
+		}
+	}
+
+	// Compare the Version and decide to update or not. Should be exactly 1 greater
+	if oldFileMeta.Version+1 == fileMetaData.Version {
+		m.FileMetaMap[fileMetaData.Filename] = *fileMetaData
+	} else {
+		err = fmt.Errorf("Unexpected file Version. Yours:%d, Expected:%d, Lastest on Server:%d\n",
+			fileMetaData.Version, oldFileMeta.Version+1, oldFileMeta.Version)
+	}
+
+	*latestVersion = m.FileMetaMap[fileMetaData.Filename].Version
+
+	return
 }
 
 // Given an input hashlist, returns a mapping of BlockStore addresses to hashlists.
@@ -35,7 +58,7 @@ func (m *MetaStore) AddNode(nodeAddr string, succ *bool) error {
 	// find successor node
 	panic("todo")
 
-	// call RPC to migrate blocks from successor node to this node
+	// call RPC to migrate some blocks from successor node to this node
 	inst := MigrationInstruction{
 		LowerIndex: "todo",
 		UpperIndex: "todo",
@@ -55,7 +78,7 @@ func (m *MetaStore) AddNode(nodeAddr string, succ *bool) error {
 		return e
 	}
 
-	// deal with added node in consistent hash ring data structure
+	// deal with added node in BlockStoreRing
 	panic("todo")
 
 	// close the connection
@@ -70,7 +93,7 @@ func (m *MetaStore) RemoveNode(nodeAddr string, succ *bool) error {
 	// find successor node
 	panic("todo")
 
-	// call RPC to migrate blocks from successor node to this node
+	// call RPC to migrate all blocks from this node to successor node
 	inst := MigrationInstruction{
 		LowerIndex: "todo",
 		UpperIndex: "todo",
@@ -90,7 +113,7 @@ func (m *MetaStore) RemoveNode(nodeAddr string, succ *bool) error {
 		return e
 	}
 
-	// deal with removed node
+	// deal with removed node in BlockStoreRing
 	panic("todo")
 
 	// close the connection

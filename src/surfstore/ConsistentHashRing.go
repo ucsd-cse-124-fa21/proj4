@@ -16,7 +16,8 @@ type ConsistentHashRing struct {
 	Nodes    []Node
 }
 
-// Hash a string and perform a modulo operation
+// Perform a modulo operation on a hash string.
+// The hash string is assumed to be hexadecimally encoded.
 func HashMod(hashString string, ringSize int) int {
 	hashBytes, _ := hex.DecodeString(hashString)
 	hashInt := new(big.Int).SetBytes(hashBytes[:])
@@ -62,5 +63,8 @@ func (ms *ConsistentHashRing) RemoveNode(nodeAddr string) {
 
 // Create consistent hash ring struct with a list of blockstore addresses
 func NewConsistentHashRing(ringSize int, blockStoreAddrs []string) ConsistentHashRing {
+	// You can not use ComputeNodeIndex method to compute the ring index of blockStoreAddr in blockStoreAddrs here.
+	// You will need to use HashMod function, remember to hash the blockStoreAddr before calling HashMod
+	// Hint: refer to ComputeNodeIndex method on how to hash the blockStoreAddr before calling HashMod
 	panic("todo")
 }

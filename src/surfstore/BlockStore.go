@@ -19,20 +19,49 @@ func (bs *BlockStore) GetBlockMap(succ *bool, serverBlockInfoMap *map[string]Blo
 }
 
 func (bs *BlockStore) GetBlock(blockHash string, blockData *Block) error {
-	// copy your code implemented in project 3 here
-	panic("todo")
+	block, exist := bs.BlockMap[blockHash]
+
+	if exist {
+		blockData.BlockData = block.BlockData
+		blockData.BlockSize = block.BlockSize
+	} else {
+		blockData = nil
+	}
+
+	return nil
 }
 
 func (bs *BlockStore) PutBlock(block Block, succ *bool) error {
-	// copy your code implemented in project 3 here
-	panic("todo")
+	blockHash := GetBlockHashString(block.BlockData)
+	bs.BlockMap[blockHash] = block
+	*succ = true
+
+	return nil
+}
+
+func (bs *BlockStore) hasBlock(blockHash string, hasBlock *bool) error {
+	_, *hasBlock = bs.BlockMap[blockHash]
+
+	return nil
 }
 
 //Given a list of hashes “in”, returns a list containing the
 //subset of in that are stored in the key-value store
 func (bs *BlockStore) HasBlocks(blockHashesIn []string, blockHashesOut *[]string) error {
-	// copy your code implemented in project 3 here
-	panic("todo")
+	hasBlocksSlice := make([]string, 0)
+
+	for _, blockHash := range blockHashesIn {
+		hasBlock := false
+		_ = bs.hasBlock(blockHash, &hasBlock)
+
+		if hasBlock {
+			hasBlocksSlice = append(hasBlocksSlice, blockHash)
+		}
+	}
+
+	blockHashesOut = &hasBlocksSlice
+
+	return nil
 }
 
 // Helper function for modulo operation
