@@ -5,9 +5,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
+	"net/http"
+	"net/rpc"
 	"os"
 	"strconv"
 	"strings"
+	"surfstore"
 )
 
 // Usage String
@@ -64,6 +68,24 @@ func main() {
 }
 
 func startServer(hostAddr string, serviceType string, ringSize int, blockStoreAddrs []string) error {
-	// adapt your code implemented in project 3 here
-	panic("todo")
+	// Create a new Server
+	rpcServer := rpc.NewServer()
+
+	// Register rpc services
+	if serviceType != "block" {
+		metastore := surfstore.NewMetaStore(surfstore.NewConsistentHashRing(ringSize, blockStoreAddrs))
+		rpcServer.RegisterName("MetaStore", &metastore)
+	}
+
+	if serviceType != "meta" {
+		blockstore := surfstore.NewBlockStore(ringSize)
+		rpcServer.RegisterName("BlockStore", &blockstore)
+	}
+
+	l, e := net.Listen("tcp", hostAddr)
+	if e != nil {
+		return e
+	}
+
+	return http.Serve(l, rpcServer)
 }

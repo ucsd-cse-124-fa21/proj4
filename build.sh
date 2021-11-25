@@ -18,12 +18,13 @@
 # 
 # 3. Voila
 
-# Clean up the exisitng binaries in current directory
+# Clean up the existing binaries in current directory
 rm -rf ./bin/surfstoreAdminExec ./bin/surfstoreServerExec ./bin/surfstoreDebugExec
 
 # Build and install the necessary binaries for scripts to run
 cd src/surfstore/
 go install ./...
+cd ../..
 
 # Build the docker image for run-client.sh to run
 docker build -t surfstore-client .
