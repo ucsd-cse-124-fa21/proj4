@@ -34,8 +34,6 @@ type ConsistentHashRing struct {
 `BlockStore.go` provides a skeleton implementation of the `BlockStoreInterface` and `MetaStore.go` provides a skeleton implementation of the `MetaStoreInterface` 
 **You must implement the methods in these 2 files which have `panic("todo")` as their body.**
 
-`init/SurfstoreServerExec/main.go` also has a method `startServer` **which you must adapt your code implemented in project 3 here**.
-
 ## User Client
 The user client refers to the same client we implemented in Project 3 that does the sync operation. If you have implemented the client properly, assuming `GetBlockStoreMap()` could return multiple BlockStore addresses, then that client shall work automatically for this project. In case you haven’t made it to implement a correct client in Project 3, we have provided a user client binary to you in the starter code.
 
@@ -119,7 +117,7 @@ Here, `ring_size` defines the ring size we use for consistent hash ring (default
 
 Examples:
 ```shell
-> ./run-debug.sh -s localhost:8081
+> ./run-debug.sh localhost:8081
 localhost:8081
 --------BEGIN PRINT MAP--------
 	 f5ad3def7576b054cdd88c3747437f4bfc07bc0352ed219accf3308d2ad8a2ac 44
